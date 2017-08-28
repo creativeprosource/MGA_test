@@ -1,0 +1,22 @@
+body.mga {
+    font-family: Helvetica,  Arial, sans-serif;
+    font-size:10px;
+}
+.mga .content {
+    min-width:400px;
+    min-height:700px;
+    padding:30px;
+    text-align:center;
+}
+.mga .hidden {display:none;}
+.mga .red-text {color:red;}
+.mga #modal-block {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background-color:rgba(0,0,0,.5);
+    display:none;
+}
+.mga #modal-container {position:absolute;width:100%;display:none;top:0;margin:30px auto;}
