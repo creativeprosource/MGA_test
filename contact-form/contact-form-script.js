@@ -6,8 +6,14 @@ $( document ).ready(function() {
     // handle form submission
       $('#contact-form').submit(function(e) {
             e.preventDefault(); //Prevent the normal submission action
-            var contactForm = new HandleFormSubmit(this.id);// creates and executes a new form handler
+            HandleFormSubmit(this.id);
         });
+
+    // validate input on change
+    $('.formdata').change(function() {
+        var validate =  new MakeValidation();
+        validate.doValidation($(this));
+    });
 
     // if state select changes show or hide conformation select
     $('#state-select').change(function(){

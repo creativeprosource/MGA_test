@@ -21,6 +21,62 @@ $( document ).ready(function() {
  If required, the "required" flag should be the first in the comma separated list.
  a class of "formdata" is required on all inputs to be validated and passed to the server through AJAX to be handled.
 */
+function MakeValidation() {
+    vi=this;
+    vi.nameToMsg = function(str) // converts lowercase, hyphen separated input name to space separated Word Capitalized
+    {
+        var splitStr = str.toLowerCase().split('-');
+        for (var i = 0; i < splitStr.length; i++) {
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        return splitStr.join(' ');
+    };
+    vi.validate = function (item,type) // this does the validation
+    {
+        var err = 0;
+        var name = item.attr('name');
+        var value = item.val();
+        var msg = "";
+        switch (type)
+        {
+            case 'required':
+                if(value == '' || value === undefined) {
+                    err = 1;
+                    msg = vi.nameToMsg(name)+" is a required field.";
+                }
+                break;
+            case 'phone-usa':
+                if(!value.match(/^\d\d\d\-\d\d\d-\d\d\d\d$/)) {
+                    err = 1;
+                    msg = "Please enter a valid phone number";
+                }
+                break;
+            // Add more validation types below
+        }
+        if(err > 0){
+            item.addClass('invalid');
+        }
+        $("#"+name+"-err-message").text(msg);
+        // console.log( name+' '+value+' '+type+((err != 0)?' ERROR':' OK') );
+        return err;
+    };
+    vi.doValidation = function(item) {
+        if(item.attr('validate') === undefined) return 0;
+        var errors = 0;
+        var err = 0;
+        // the validation attribute is a comma separated list of validation types to apply to the input
+        var validations = item.attr('validate').split(',');
+        validations.forEach(function (type) {
+            if (err === 0) {
+                item.removeClass('invalid');
+                err = vi.validate(item, type);
+                errors += err;
+            }
+        });
+        return errors;
+    };
+}
+
 function HandleFormSubmit(formId) {
     var hfs = this;
     hfs.submit = function (formId) // the main function called to submit a form passing the forms ID
@@ -56,56 +112,19 @@ function HandleFormSubmit(formId) {
          });
     */
     };
-
+    hfs.validate = new MakeValidation();
     hfs.validateForm = function (formId)
     {
         // validate all form data with a class of "formdata and a validate attribute
         var errors = 0;
         $('#'+formId+' .formdata').each(function() {
             var item = $(this);
-            var err = 0;
-            // the validation attribute is a comma separated list of validation types to apply to the input
-            var validations = item.attr('validate').split(',');
-            validations.forEach(function (type){
-                if(err === 0) {
-                    item.removeClass('invalid');
-                    err = hfs.validate(item, type);
-                    errors += err;
-                }
-            });
+            errors += hfs.validate.doValidation(item);
         });
-        // console.log('errors='+errors);
+        //console.log('errors='+errors);
         return errors;
     };
-    hfs.validate = function (item,type) // this does the validation
-    {
-        var err = 0;
-        var name = item.attr('name');
-        var value = item.val();
-        var msg = "";
-        switch (type)
-        {
-            case 'required':
-                if(value == '' || value === undefined) {
-                    err = 1;
-                    msg = hfs.nameToMsg(name)+" is a required field.";
-                }
-                break;
-            case 'phone-usa':
-                if(!value.match(/^\d\d\d\-\d\d\d-\d\d\d\d$/)) {
-                    err = 1;
-                    msg = "Please enter a valid phone number";
-                }
-                break;
-            // Add more validation types below
-        }
-        if(err > 0){
-            item.addClass('invalid');
-        }
-        $("#"+name+"-err-message").text(msg);
-        // console.log( name+' '+value+' '+type+((err != 0)?' ERROR':' OK') );
-        return err;
-    };
+
     hfs.getFormData = function (formId)
     {
         // gets values from all inputs in form with a class of "formdata" and returns a JSON object
@@ -116,14 +135,7 @@ function HandleFormSubmit(formId) {
         });
         return JSON.stringify(data);
     };
-    hfs.nameToMsg = function (str) // converts lowercase, hyphen separated input name to space separated Word Capitalized
-    {
-        var splitStr = str.toLowerCase().split('-');
-        for (var i = 0; i < splitStr.length; i++) {
-            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-        }
-        return splitStr.join(' ');
-    };
+
 
     // submit the form
     hfs.submit(formId);
