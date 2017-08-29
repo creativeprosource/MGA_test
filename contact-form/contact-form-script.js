@@ -6,7 +6,7 @@ $( document ).ready(function() {
     // handle form submission
       $('#contact-form').submit(function(e) {
             e.preventDefault(); //Prevent the normal submission action
-            var contactForm= new HandleFormSubmit(this.id);// create new form handler
+            var contactForm = new HandleFormSubmit(this.id);// creates and executes a new form handler
         });
 
     // if state select changes show or hide conformation select
@@ -25,9 +25,7 @@ $( document ).ready(function() {
     // remove form
     $('#contact-close-button').click(function(){
         $('#modal-block, #modal-container').fadeOut('slow',function() {
-            contactForm = null; // clear form handler from memory
             $('#modal-container').html(''); // remove form from DOM
-
         });
     });
 

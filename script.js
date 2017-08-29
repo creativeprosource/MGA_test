@@ -15,8 +15,7 @@ $( document ).ready(function() {
 /*
  HandleFormSubmit is an OOP system to handle any form submission it is used as follows
 
- var formHandler= new HandleFormSubmit; // create new form handler
- formHandler.submit(theFormId); // submit the form passing the form's ID
+ var formHandler= new HandleFormSubmit(theFormId; // create a new form handler passing the form's ID
 
  validation is handled by a comma separated "validate" attribute on the input i.e. validate="required,phone-usa"
  If required, the "required" flag should be the first in the comma separated list.
@@ -39,9 +38,11 @@ function HandleFormSubmit(formId) {
          url: form.attr('action'),
          data:
          {
-         model:form.attr('action'),   // "model-class-name"
-         method:'form_submit', // "method to call"
-         params:formData  // this line optional can be a single value or an array of values in the order of the called method
+         model:form.attr('name'),   // "The form name must be the same as the class that will handle saving the data"
+         method:'submit', // "Any callable method in the named class"
+         params:formData
+         // params is optional. It can be a single value (as in this case a single json string)
+         // or an array of values in the order of the called method's parameters.
          },
          success:function(data)
          {
